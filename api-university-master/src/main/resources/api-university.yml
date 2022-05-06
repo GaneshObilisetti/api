@@ -1,0 +1,190 @@
+openapi: 3.0.0
+info:
+  description: "This is a sample set of APIs defined for common University services"
+  version: 0.1.0
+  title: API University
+  contact:
+    email: info@prowesssoft.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+tags:
+  - name: student
+    description: Everything about a Student
+paths:
+  /students:
+    get:
+      tags:
+        - student
+      summary: Get a list of students into the university
+      description: "A list of students"
+      operationId: getStudents
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/Students"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Students"
+        "405":
+          description: Invalid input
+    post:
+      tags:
+        - student
+      summary: Add a new student into the university
+      description: ""
+      operationId: addStudent
+      requestBody:
+        $ref: "#/components/requestBodies/Student"
+      responses:
+        "405":
+          description: Invalid input
+  "/students/{studentid}":
+    get:
+      tags:
+        - student
+      summary: Find student by ID
+      description: Returns a single student
+      operationId: getStudentById
+      parameters:
+        - name: studentid
+          in: path
+          description: ID of student to return
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/Student"
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Student"
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: Student not found
+    put:
+      tags:
+        - student
+      summary: Update an existing student
+      description: ""
+      operationId: updateStudent
+      parameters:
+        - name: studentid
+          in: path
+          description: ID of student to return
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        $ref: "#/components/requestBodies/Student"
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: Student not found
+        "405":
+          description: Validation exception
+    delete:
+      tags:
+        - student
+      summary: Deletes a student
+      description: ""
+      operationId: deleteStudent
+      parameters:
+        - name: api_key
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: studentid
+          in: path
+          description: Student id to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: Student not found
+servers:
+  - url: localhost
+components:
+  requestBodies:
+    Student:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Student"
+        application/xml:
+          schema:
+            $ref: "#/components/schemas/Student"
+      description: Student object that needs to be added to the University
+      required: true
+  schemas:
+    Student:
+      type: object
+      required:
+        - studentid
+      properties:
+        self:
+          type: string
+          example: localhost/students/123
+        kind:
+          type: string
+          example: Student
+        studentid:
+          type: integer
+          format: int64
+          example: 123
+        name:
+          type: string
+          example: Jacob
+        department:
+          type: string
+          example: Computer Science
+        email:
+          type: string
+          example: john@apiuniversity.com
+        postal_code:
+          type: string
+          example: 1A2B3
+      xml:
+        name: Student
+    Students:
+      type: object
+      properties:
+        self:
+          type: string
+          example: localhost/students
+        kind:
+          type: string
+          example: students
+        contents:
+          type: array
+          items: {
+            $ref: "#/components/schemas/Student"
+          }
+      xml:
+        name: Students
+    ApiResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        type:
+          type: string
+        message:
+          type: string
